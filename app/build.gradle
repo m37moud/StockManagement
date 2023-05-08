@@ -29,6 +29,9 @@ android {
         }
     }
     compileOptions {
+        // Flag to enable support for the new language APIs
+//        coreLibraryDesugaringEnabled true
+
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
@@ -121,6 +124,15 @@ dependencies {
     //excel
 //    implementation("org.apache.poi:poi:3.17")
 //    implementation("org.apache.poi:poi-ooxml:3.17")
+
+//    implementation 'com.afollestad.material-dialogs:files:3.3.0'
+//    implementation 'com.afollestad.material-dialogs:datetime:3.3.0'
+
+    // date and files
+    def compose_material_dialogs = "0.7.0"
+    implementation "io.github.vanpra.compose-material-dialogs:datetime:${compose_material_dialogs}"
+    implementation "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0"
+//    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.9'
 }
 kapt {
     correctErrorTypes true
