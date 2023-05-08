@@ -2,9 +2,6 @@ package com.example.storemanagement.ui.feature.scan
 
 import android.Manifest
 import android.app.Activity
-import android.app.Activity.RESULT_OK
-import android.app.AlertDialog
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.util.Size
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -16,7 +13,6 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -37,6 +33,7 @@ import com.budiyev.android.codescanner.ScanMode
 import com.journeyapps.barcodescanner.CaptureManager
 import com.journeyapps.barcodescanner.CompoundBarcodeView
 import com.journeyapps.barcodescanner.DecoratedBarcodeView
+import com.journeyapps.barcodescanner.ScanOptions
 
 @Composable
 fun Scanner(navController: NavController) {
@@ -112,11 +109,11 @@ fun Scanner(navController: NavController) {
                 .fillMaxWidth()
                 .height(300.dp)
                 .padding(10.dp),
-                onBarcodeScanned = {barCode->
-                code = barCode
-            }, onError = { err->
-                code = err
-            }
+                onBarcodeScanned = { barCode ->
+                    code = barCode
+                }, onError = { err ->
+                    code = err
+                }
             )
 
 
@@ -145,12 +142,9 @@ fun BarcodeScanner(
     AndroidView(
         factory = { context ->
             CompoundBarcodeView(context).apply {
-
                 val capture = CaptureManager(context as Activity, this)
-
                 capture.initializeFromIntent(context.intent, null)
                 this.setStatusText("")
-
                 capture.decode()
                 this.decodeContinuous { result ->
                     if (scanFlag) {
@@ -176,7 +170,6 @@ fun BarcodeScanner(
 }
 
 
-
 @Composable
 fun BarcodeScanner3(
     modifier: Modifier = Modifier,
@@ -199,7 +192,7 @@ fun BarcodeScanner3(
                 camera = CodeScanner.CAMERA_BACK
                 formats = CodeScanner.ALL_FORMATS
                 autoFocusMode = AutoFocusMode.SAFE
-                scanMode = ScanMode.PREVIEW
+                scanMode = ScanMode.SINGLE
                 isAutoFocusEnabled = true
                 isFlashEnabled = false
 
@@ -217,38 +210,4 @@ fun BarcodeScanner3(
 //            codeScanner?.releaseResources()
 //        }
     )
-}
-@Composable
-fun MyApp() {
-        Column(modifier = Modifier.padding(16.dp)) {
-            val context = LocalContext.current
-            val scanLauncher = rememberLauncherForActivityResult(
-                contract = ActivityResultContracts.StartActivityForResult()
-            ) { result ->
-                if (result.resultCode == RESULT_OK) {
-                    val contents = result.data?.getStringExtra("SCAN_RESULT")
-                    if (contents != null) {
-                        AlertDialog.Builder(context)
-                            .setTitle("Result")
-                            .setMessage(contents)
-                            .setPositiveButton("OK") { dialog, _ ->
-                                dialog.dismiss()
-                            }
-                            .show()
-                    }
-                }
-            }
-            Button(onClick = {
-                scanLauncher.launch(
-                    Intent(context, CaptureAct::class.java)
-                        .apply {
-                            putExtra("SCAN_MODE", "QR_CODE_MODE")
-                            putExtra("PROMPT_MESSAGE", "Volume up to flash on")
-                            putExtra("RESULT_DISPLAY_DURATION_MS", 0)
-                        }
-                )
-            }) {
-                Text(text = "Scan Code")
-            }
-        }
 }

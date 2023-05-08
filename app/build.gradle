@@ -119,8 +119,8 @@ dependencies {
 
     implementation 'com.github.yuriy-budiyev:code-scanner:2.3.2'
     //excel
-    implementation("org.apache.poi:poi:3.17")
-    implementation("org.apache.poi:poi-ooxml:3.17")
+//    implementation("org.apache.poi:poi:3.17")
+//    implementation("org.apache.poi:poi-ooxml:3.17")
 }
 kapt {
     correctErrorTypes true
