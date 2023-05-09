@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.example.storemanagement.navigation.Screens
+import com.example.storemanagement.ui.component.ItemBox
 
 @Composable
 fun ChooserScreen(navController: NavController) {
@@ -58,7 +59,10 @@ fun ChooserScreen(navController: NavController) {
                 modifier = Modifier.size(150.dp),
                 name = "Stock",
                 img = R.drawable.ic_stock
-            )
+            ){
+                navController.navigate(Screens.StockScreen.route)
+
+            }
 
 
         }
@@ -73,61 +77,22 @@ fun ChooserScreen(navController: NavController) {
                 modifier = Modifier.size(150.dp),
                 name = "Settings",
                 img = R.drawable.ic_settings
-            )
+            ){
+                navController.navigate(Screens.SettingsScreen.route)
+
+            }
             ItemBox(
                 modifier = Modifier.size(150.dp),
                 name = "Share",
                 img = R.drawable.ic_share
-            )
+            ){
+                navController.navigate(Screens.ShareScreen.route)
+
+            }
 
         }
         Spacer(modifier = Modifier.weight(1f))
 
     }
 
-}
-
-@OptIn(ExperimentalCoilApi::class)
-@Composable
-fun ItemBox(
-    modifier: Modifier = Modifier,
-    name: String,
-    img: Int = R.drawable.ic_camera,
-    onClick: () -> Unit = {}
-) {
-    val painter = rememberImagePainter(img)
-
-    Card(modifier.clickable { onClick() }, elevation = 10.dp) {
-        Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-            Image(
-                painter = painter,
-                contentDescription = "img",
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .size(100.dp)
-                    .align(CenterHorizontally),
-                contentScale = ContentScale.Inside,
-
-//
-            )
-            Spacer(modifier = Modifier.height(10.dp))
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp)
-                    .align(CenterHorizontally),
-                elevation = 15.dp
-            ) {
-
-                Text(
-                    text = name,
-                    textAlign = TextAlign.Center,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                )
-            }
-
-        }
-
-    }
 }
