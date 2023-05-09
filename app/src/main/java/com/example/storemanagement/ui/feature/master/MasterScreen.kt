@@ -23,7 +23,7 @@ fun MasterScreen(navController: NavController) {
             .background(SnackbarDefaults.backgroundColor),
         topBar = {
             ActionTopAppbar(
-                title = "add Category",
+                title = "Master Screen",
                 onBack = { navController.popBackStack() },
                 elevation = 8.dp
             )
