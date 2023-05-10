@@ -1,6 +1,8 @@
 package com.example.storemanagement.ui.feature.scan
 
 import android.Manifest
+import android.app.Application
+import android.content.Context
 import android.content.pm.PackageManager
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,6 +29,8 @@ import com.example.storemanagement.model.ScannedItem
 import com.example.storemanagement.ui.component.BarcodeScanner
 import com.example.storemanagement.ui.component.Counter
 import com.example.storemanagement.ui.component.MyTextDateField
+import dagger.hilt.android.internal.Contexts.getApplication
+import java.lang.Thread.sleep
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -81,37 +86,47 @@ fun Scanner(navController: NavController) {
 //                    )
                 )
             }
-
-            BarcodeScanner(modifier = Modifier
-                .fillMaxWidth()
-                .height(150.dp),
-                scanFlag,
-                onBarcodeScanned = { barCode ->
-                    scanFlag.value = true
-                    if (checkBarCode(productList = testList, barCode = barCode)) {
-                        sameItem.value = true
-                        scanFlag.value = false
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(150.dp)
+            )
+            {
 
 
-                    } else {
+                BarcodeScanner(modifier = Modifier
+                    .fillMaxWidth()
+                    .height(150.dp),
+                    scanFlag,
+                    onBarcodeScanned = { barCode ->
                         scanFlag.value = true
 
-                        code = barCode
-                        ScannedItem(barCode = barCode).apply {
-                            Log.d("Scanner", " barCode")
-                            testList.add(this)
+                        if (checkBarCode(productList = testList, barCode = barCode)) {
+                            sameItem.value = true
+                            scanFlag.value = false
+
+
+                        } else {
+                            scanFlag.value = true
+
+                            code = barCode
+                            ScannedItem(barCode = barCode).apply {
+                                Log.d("Scanner", " barCode")
+                                testList.add(this)
+                            }
+                            sleep(500)
+                            scanFlag.value = false
+
                         }
-                        scanFlag.value = false
-
+                    }, onError = { err ->
+                        code = err
                     }
-                }, onError = { err ->
-                    code = err
-                }
-            )
+                )
+            }
 
 
 
-            ProductLazyList(testList,sameItem ,onDelete = { item ->
+            ProductLazyList(testList, sameItem, onDelete = { item ->
                 testList.remove(item)
             })
 
@@ -126,6 +141,9 @@ fun Scanner(navController: NavController) {
         }
     }
 }
+
+private fun hasFlash(context: Context) =
+    getApplication(context).packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)
 
 private fun checkBarCode(productList: List<ScannedItem>, barCode: String): Boolean {
     val barCodeList = productList.map { item ->
