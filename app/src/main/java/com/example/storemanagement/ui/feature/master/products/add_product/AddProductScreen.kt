@@ -1,13 +1,10 @@
-package com.example.storemanagement.ui.feature.master.categories.add_category
+package com.example.storemanagement.ui.feature.master.products.add_product
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.Composable
@@ -20,13 +17,12 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.storemanagement.navigation.Screens
 import com.example.storemanagement.ui.component.ActionTopAppbar
-import com.example.storemanagement.ui.component.BottomAppBarComponent
+
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun AddCategoryScreen(navController: NavController) {
+fun AddProductScreen(navController: NavController) {
     Scaffold(
 
         modifier = Modifier
@@ -34,7 +30,7 @@ fun AddCategoryScreen(navController: NavController) {
             .background(SnackbarDefaults.backgroundColor),
         topBar = {
             ActionTopAppbar(
-                title = "add Category",
+                title = "add Product",
                 onBack = { navController.popBackStack() },
                 elevation = 8.dp
             )
@@ -96,7 +92,6 @@ private fun MainContent(bottomAppBarHeight: Dp, onBack: (() -> Unit)? = null) {
 //                Text(text = "Save", modifier = Modifier.padding(end = 4.dp))
             }
         }
-
         Row(
             modifier = fullWidthModifier,
             horizontalArrangement = Arrangement.Center,
@@ -120,7 +115,6 @@ private fun MainContent(bottomAppBarHeight: Dp, onBack: (() -> Unit)? = null) {
             thickness = 2.dp,
             color = MaterialTheme.colors.onSecondary,
         )
-
         Column(
             modifier = Modifier.fillMaxSize(),
 //            verticalArrangement = Arrangement.Center,
@@ -133,19 +127,8 @@ private fun MainContent(bottomAppBarHeight: Dp, onBack: (() -> Unit)? = null) {
                 onValueChange = { newValue ->
                     textFieldValue.value = newValue
                 },
-                label = { Text("category name") },
-                placeholder = { Text("Enter Category name") },
-
-//            colors = TextFieldDefaults.textFieldColors(
-//                textColor = Color.White,
-//                backgroundColor = Color(0xffFFA000),
-//                placeholderColor = Color(0xffFFF176),
-//                unfocusedLabelColor = Color(0xff795548),
-//                focusedLabelColor = Color(0xff66BB6A),
-//                errorLabelColor = Color(0xffFF1744),
-//                unfocusedIndicatorColor = Color(0xffEF9A9A),
-//                focusedIndicatorColor = Color(0xffFFA000)
-//            )
+                label = { Text("product name") },
+                placeholder = { Text("Enter Product name") },
             )
             Spacer(modifier = Modifier.weight(1f))
 
@@ -167,11 +150,12 @@ private fun MainContent(bottomAppBarHeight: Dp, onBack: (() -> Unit)? = null) {
                         modifier = Modifier.padding(start = 4.dp),
                         contentDescription = null
                     )
-                    Text(text = "Save", modifier = Modifier.padding(end = 4.dp))
+                    Text(text = "Save", modifier = Modifier.padding(end = 4.dp),)
                 }
 
             }
         }
+
     }
 
 }

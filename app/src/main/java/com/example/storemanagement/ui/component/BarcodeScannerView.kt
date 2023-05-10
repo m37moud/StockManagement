@@ -11,15 +11,20 @@ import androidx.camera.core.ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import com.budiyev.android.codescanner.AutoFocusMode
@@ -33,6 +38,7 @@ import com.example.storemanagement.ui.feature.scan.QrCodeAnalyzer
 import com.google.zxing.ResultPoint
 import com.google.zxing.client.android.BeepManager
 import com.journeyapps.barcodescanner.*
+import dagger.hilt.android.internal.Contexts
 
 
 @Composable
@@ -46,11 +52,7 @@ fun BarcodeScanner(
 //        mutableStateOf(false)
 //    }
     val context = LocalContext.current
-    var isFlash by remember {
-        mutableStateOf(
-            context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)
-        )
-    }
+    var isFlash by remember { mutableStateOf(false) }
 
     val compoundBarcodeView = remember {
         CompoundBarcodeView(context)
@@ -80,7 +82,7 @@ fun BarcodeScanner(
                             println("$barCodeOrQr")
                             //Do something and when you finish this something
                             //put scanFlag = false to scan another item
-                            scanFlag.value = false
+//                            scanFlag.value = false
                         }
                         //If you don't put this scanFlag = false, it will never work again.
                         //you can put a delay over 2 seconds and then scanFlag = false to prevent multiple scanning
@@ -90,31 +92,40 @@ fun BarcodeScanner(
             },
             modifier = Modifier.matchParentSize()
         )
-        Box(modifier = modifier.align(Alignment.TopStart)) {
-            if (isFlash) {
-                Button(onClick = {
+        Box(
+            modifier = modifier
+                .align(Alignment.TopStart)
+                .border(width = 2.dp, MaterialTheme.colors.surface, shape = RectangleShape)
+        ) {
+            if (!hasFlash(context)) {
+                isFlash = true
+            }
+
+            IconButton(
+                onClick = {
+                    isFlash = !isFlash
+
+                },
+            ) {
+                if (isFlash) {
                     compoundBarcodeView.setTorchOn()
-
-                }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_flash_on),
-                        contentDescription = null
-                    )
-                }
-            } else {
-                Button(onClick = {
-                    compoundBarcodeView.setTorchOff()
-
-                }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_flash_off),
-                        contentDescription = null
+                        contentDescription = null, tint = MaterialTheme.colors.surface
                     )
+                } else {
+                    compoundBarcodeView.setTorchOff()
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_flash_on),
+                        contentDescription = null, tint = MaterialTheme.colors.surface
+                    )
+
                 }
             }
+
         }
     }
-    DisposableEffect(key1 = "someKey" ){
+    DisposableEffect(key1 = "someKey") {
         compoundBarcodeView.resume()
         onDispose {
             compoundBarcodeView.pause()
@@ -147,6 +158,8 @@ fun BarcodeScannerView(
     )
 }
 
+private fun hasFlash(context: Context) =
+    context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)
 
 
 /*

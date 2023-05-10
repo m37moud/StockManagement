@@ -23,6 +23,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.storemanagement.R
 import com.example.storemanagement.model.ScannedItem
@@ -36,7 +37,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun Scanner(navController: NavController) {
+fun Scanner(navController: NavController, scannerViewModel: ScannerViewModel = viewModel()) {
     var code by remember {
         mutableStateOf("scanning")
     }
@@ -46,6 +47,9 @@ fun Scanner(navController: NavController) {
     var scanFlag = remember {
         mutableStateOf(false)
     }
+//    val flag = scannerViewModel.scanFlag.collectAsState().value
+    val scanList = scannerViewModel.scannedItems.collectAsState().value
+//    scanFlag.value = flag
     val context = LocalContext.current
 
     var hasCamPermission by remember {
@@ -74,16 +78,6 @@ fun Scanner(navController: NavController) {
 
             val testList = remember {
                 mutableListOf<ScannedItem>(
-//                    ScannedItem(
-//                        barCode = "546543213",
-//                        name = "test",
-//                        unit = "pcs"
-//                    ),
-//                    ScannedItem(
-//                        barCode = "987654312",
-//                        name = "test 1",
-//                        unit = "pcs"
-//                    )
                 )
             }
             Box(
@@ -101,23 +95,31 @@ fun Scanner(navController: NavController) {
                     onBarcodeScanned = { barCode ->
                         scanFlag.value = true
 
-                        if (checkBarCode(productList = testList, barCode = barCode)) {
-                            sameItem.value = true
-                            scanFlag.value = false
+                        scannerViewModel.onBarcodeScanned(barCode)
+                        sleep(1000)
 
-
-                        } else {
-                            scanFlag.value = true
-
-                            code = barCode
-                            ScannedItem(barCode = barCode).apply {
-                                Log.d("Scanner", " barCode")
-                                testList.add(this)
-                            }
-                            sleep(500)
-                            scanFlag.value = false
-
-                        }
+                        scanFlag.value = false
+//                        if (checkBarCode(productList = testList, barCode = barCode)) {
+//                            sameItem.value = true
+//                            code = barCode
+//
+//                            sleep(1000)
+//
+//                            scanFlag.value = false
+//
+//
+//                        } else {
+//                            scanFlag.value = true
+//
+//                            code = barCode
+//                            ScannedItem(barCode = barCode, count = 1).apply {
+//                                Log.d("Scanner", " barCode")
+//                                testList.add(this)
+//                            }
+//                            sleep(1000)
+//                            scanFlag.value = false
+//
+//                        }
                     }, onError = { err ->
                         code = err
                     }
@@ -125,34 +127,38 @@ fun Scanner(navController: NavController) {
             }
 
 
+            if (scanList.isEmpty())
+                EmptyScreen()
+            else
+                ProductLazyList(scanList, sameItem,
+                    onDelete = { item ->
+                        testList.remove(item)
+                    })
 
-            ProductLazyList(testList, sameItem, onDelete = { item ->
-                testList.remove(item)
-            })
-
-            Text(
-                text = code,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(32.dp)
-            )
         }
     }
 }
 
-private fun hasFlash(context: Context) =
-    getApplication(context).packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)
-
-private fun checkBarCode(productList: List<ScannedItem>, barCode: String): Boolean {
-    val barCodeList = productList.map { item ->
-        item.barCode
+@Composable
+fun EmptyScreen() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = "Scan Bar Code to Add Items")
     }
-    if (barCodeList.contains(barCode))
-        return true
-    return false
 }
+
+//
+//private fun checkBarCode(productList: List<ScannedItem>, barCode: String): Boolean {
+//    val barCodeList = productList.map { item ->
+//        item.barCode
+//    }
+//    if (barCodeList.contains(barCode))
+//        return true
+//    return false
+//}
 
 @Composable
 fun ProductLazyList(
@@ -187,9 +193,9 @@ fun ProductItem(
     val formateDate = date.format(pattern)
     var expDate = remember { mutableStateOf(TextFieldValue(formateDate)) }
 
-    if (sameItem.value) {
-        counter.value.plus(1)
-    }
+//    if (sameItem.value) {
+//        counter.value.plus(1)
+//    }
 
     Column(modifier = Modifier) {
         Row(

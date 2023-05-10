@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -90,8 +91,7 @@ private fun MainContent(bottomAppBarHeight: Dp, listCategories: List<Categories>
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-//            .background(backgroundColor)
-        ,
+            .background(Color.LightGray.copy(alpha = .4f)),
         contentPadding = PaddingValues(
             top = 8.dp,
             start = 8.dp,
@@ -110,7 +110,11 @@ private fun MainContent(bottomAppBarHeight: Dp, listCategories: List<Categories>
 
 @Composable
 fun CategoryItem(modifier: Modifier = Modifier, categories: Categories) {
-    Row(modifier = modifier.fillMaxWidth()) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
         Text(
             text = categories.id,
             fontWeight = FontWeight.Bold,

@@ -29,7 +29,8 @@ fun MasterScreen(navController: NavController) {
             )
         },
 
-        ) {
+        )
+    {
         Row(
             modifier = Modifier.fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically,

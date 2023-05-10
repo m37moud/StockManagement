@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
     BottomAppBar(
         backgroundColor = MaterialTheme.colors.surface,
         contentColor = MaterialTheme.colors.onSurface,
-        elevation = 8.dp,
+        elevation = 10.dp,
         cutoutShape = CircleShape
     ) {
 

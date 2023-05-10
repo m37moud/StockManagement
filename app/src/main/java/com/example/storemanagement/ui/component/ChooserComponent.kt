@@ -47,12 +47,14 @@ fun ItemBox(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(10.dp)
+                    .padding(horizontal = 8.dp)
                     .align(Alignment.CenterHorizontally),
+                shape = CircleShape,
                 elevation = 15.dp
             ) {
 
                 Text(
+                    modifier = Modifier.padding(4.dp),
                     text = name,
                     textAlign = TextAlign.Center,
                     fontSize = 18.sp,
