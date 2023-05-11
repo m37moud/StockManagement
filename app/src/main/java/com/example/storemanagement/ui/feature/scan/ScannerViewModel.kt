@@ -15,7 +15,11 @@ import javax.inject.Inject
 class ScannerViewModel @Inject constructor(): ViewModel() {
     private val _scannedItems = MutableStateFlow<List<ScannedItem>>(emptyList())
     val scannedItems: StateFlow<List<ScannedItem>> = _scannedItems
-
+    
+  //  private val _scannedItems = MutableStateListOf<ScannedItem>(emptyList())
+   // val scannedItems: List<ScannedItem> = _scannedItems
+//when observe 
+    //val list = viewmodel.scannedItems
     private var scanList: MutableSet<ScannedItem> = mutableSetOf()
 
     private val _sameItem = MutableStateFlow<Boolean>(false)
