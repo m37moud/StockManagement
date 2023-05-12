@@ -8,6 +8,9 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -41,13 +45,13 @@ fun Scanner(navController: NavController, scannerViewModel: ScannerViewModel = v
     var code by remember {
         mutableStateOf("scanning")
     }
-    var sameItem = remember {
-        mutableStateOf(false)
-    }
+//    var sameItem = remember {
+//        mutableStateOf(false)
+//    }
     var scanFlag = remember {
         mutableStateOf(false)
     }
-//    val flag = scannerViewModel.scanFlag.collectAsState().value
+    val sameItem = scannerViewModel.sameItem.collectAsState().value
     val scanList = scannerViewModel.scannedItems.collectAsState().value
 //    scanFlag.value = flag
     val context = LocalContext.current
@@ -99,27 +103,6 @@ fun Scanner(navController: NavController, scannerViewModel: ScannerViewModel = v
                         sleep(1000)
 
                         scanFlag.value = false
-//                        if (checkBarCode(productList = testList, barCode = barCode)) {
-//                            sameItem.value = true
-//                            code = barCode
-//
-//                            sleep(1000)
-//
-//                            scanFlag.value = false
-//
-//
-//                        } else {
-//                            scanFlag.value = true
-//
-//                            code = barCode
-//                            ScannedItem(barCode = barCode, count = 1).apply {
-//                                Log.d("Scanner", " barCode")
-//                                testList.add(this)
-//                            }
-//                            sleep(1000)
-//                            scanFlag.value = false
-//
-//                        }
                     }, onError = { err ->
                         code = err
                     }
@@ -130,9 +113,21 @@ fun Scanner(navController: NavController, scannerViewModel: ScannerViewModel = v
             if (scanList.isEmpty())
                 EmptyScreen()
             else
-                ProductLazyList(scanList, sameItem,
+                ProductLazyList(scanList,
+                    onMinus = { item, count ->
+                        scannerViewModel.updateCount(item, count)
+
+                    }, onAdd = { item, count ->
+                        scannerViewModel.updateCount(item, count)
+
+
+                    },
+                    onUpdate = { item ->
+                        scannerViewModel.updateExpDate(item)
+
+                    },
                     onDelete = { item ->
-                        testList.remove(item)
+                        scannerViewModel.removeItem(item)
                     })
 
         }
@@ -160,20 +155,40 @@ fun EmptyScreen() {
 //    return false
 //}
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProductLazyList(
     list: List<ScannedItem>,
-    sameItem: MutableState<Boolean>,
-    onDelete: (product: ScannedItem) -> Unit
+    onMinus: (ScannedItem, Int) -> Unit,
+    onAdd: (ScannedItem, Int) -> Unit,
+    onUpdate: (ScannedItem) -> Unit,
+    onDelete: (product: String) -> Unit
 ) {
-    LazyColumn(modifier = Modifier.fillMaxSize(),
+    LazyColumn(modifier = Modifier
+        .fillMaxSize()
+        .background(Color.LightGray.copy(alpha = .4f)),
+        contentPadding = PaddingValues(4.dp),
         content = {
-            items(list) { product ->
+            items(items = list, key = { it.barCode }) { product ->
                 ProductItem(
                     modifier = Modifier
+                        .animateItemPlacement(
+                            animationSpec = tween(
+                                durationMillis = 1000,
+                            )
+                        )
                         .fillMaxSize()
-                        .animateContentSize(),
-                    scannedItem = product, sameItem = sameItem, onDelete = { onDelete(product) }
+//                        .animateContentSize()
+                    ,
+                    scannedItem = product,
+                    onMinus = {
+                        onMinus(product, -1)
+                    }, onAdd = {
+                        onAdd(product, 1)
+
+                    },
+                    onUpdate = { onUpdate(it) },
+                    onDelete = { onDelete(product.barCode) }
                 )
             }
         })
@@ -184,63 +199,119 @@ fun ProductLazyList(
 fun ProductItem(
     modifier: Modifier = Modifier,
     scannedItem: ScannedItem,
-    sameItem: MutableState<Boolean>,
-    onDelete: () -> Unit
+    onUpdate: (ScannedItem) -> Unit,
+    onMinus: () -> Unit,
+    onAdd: () -> Unit,
+
+    onDelete: (String) -> Unit
 ) {
-    var counter = remember { mutableStateOf(1) }
+
+    var counter = remember { mutableStateOf(0) }
+//    var item = remember {
+//        ScannedItem(
+//
+//        )
+//    }
+    counter.value = scannedItem.count
     val date = LocalDate.now(ZoneId.systemDefault())
     val pattern = DateTimeFormatter.ofPattern("dd.MM.yyyy")
     val formateDate = date.format(pattern)
     var expDate = remember { mutableStateOf(TextFieldValue(formateDate)) }
 
-//    if (sameItem.value) {
-//        counter.value.plus(1)
-//    }
 
-    Column(modifier = Modifier) {
-        Row(
-            modifier = modifier,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column() {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+    Card(
+        modifier = modifier, elevation = 4.dp
 
-                    Text(text = scannedItem.barCode, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                    Counter(modifier = Modifier, counter = counter, onMinus = {
-                        counter.value--
-                    }, onAdd = {
-                        counter.value++
-                    })
+    ) {
+
+        Column(modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column() {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+
+                        Text(
+                            text = scannedItem.barCode,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
+                        )
+                        Counter(modifier = Modifier, counter = counter, onMinus = {
+                            onMinus()
+                            Log.d("ScannerScreen", "count${counter.value} ")
+
+
+                        }, onAdd = {
+                            onAdd()
+                            Log.d("ScannerScreen", "count${counter.value} ")
+
+                        }, onDone = {
+                            onUpdate(
+                                scannedItem.copy(
+                                    count = counter.value,
+                                )
+                            )
+                        })
+                    }
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+
+                        Text(
+                            text = scannedItem.name,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp
+                        )
+                        Text(
+                            text = scannedItem.unit,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp
+                        )
+                        Text(text = "EXp : ", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                        MyTextDateField(expDate)
+                    }
                 }
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
 
-                    Text(text = scannedItem.name, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                    Text(text = scannedItem.unit, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                    Text(text = "EXp : ", fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                    MyTextDateField(expDate)
+
+                IconButton(onClick = { onDelete(scannedItem.barCode) }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_delete),
+                        contentDescription = "delete"
+                    )
                 }
             }
+//            item = scannedItem.copy(
+////                barCode = scannedItem.barCode,
+////                name = scannedItem.name,
+////                unit = scannedItem.unit,
+////                count = counter.value,
+//                expDate = expDate.value.text
+//            )
+            LaunchedEffect(key1 = expDate.value.text) {
+//                Log.d("ScannerScreen", "item${item.toString()} ")
 
-
-            IconButton(onClick = { onDelete() }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_delete),
-                    contentDescription = "delete"
+                onUpdate(
+                    scannedItem.copy(
+//                barCode = scannedItem.barCode,
+//                name = scannedItem.name,
+//                unit = scannedItem.unit,
+//                count = counter.value,
+                        expDate = expDate.value.text
+                    )
                 )
             }
-        }
 
-        Divider(
-            startIndent = 0.dp,
-            thickness = 2.dp,
-            color = MaterialTheme.colors.onSecondary,
-        )
+            Divider(
+                startIndent = 0.dp,
+                thickness = 2.dp,
+                color = MaterialTheme.colors.onSecondary,
+            )
+        }
     }
 }
 

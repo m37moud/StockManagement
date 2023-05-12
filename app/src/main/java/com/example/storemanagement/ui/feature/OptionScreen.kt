@@ -53,15 +53,16 @@ fun ChooserScreen(navController: NavController) {
                 name = "Qr Scanner",
                 img = R.drawable.ic_camera
             ) {
-                navController.navigate(Screens.ScannerScreen.route){
-                    popUpTo(Screens.ScannerScreen.route) {
-//                        inclusive = true
-                        saveState = true
-
-                    }
-                    launchSingleTop = true
-                    restoreState = true
-                }
+                navController.navigate(Screens.ScannerScreen.route)
+//                {
+//                    popUpTo(Screens.ScannerScreen.route) {
+////                        inclusive = true
+//                        saveState = true
+//
+//                    }
+//                    launchSingleTop = true
+//                    restoreState = true
+//                }
             }
             ItemBox(
                 modifier = Modifier.size(150.dp),

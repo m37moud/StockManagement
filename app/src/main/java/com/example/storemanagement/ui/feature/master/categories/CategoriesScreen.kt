@@ -1,18 +1,18 @@
 package com.example.storemanagement.ui.feature.master.categories
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircle
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,25 +20,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.storemanagement.data.database.entity.CategoryEntity
 import com.example.storemanagement.model.Categories
 import com.example.storemanagement.navigation.Screens
 import com.example.storemanagement.ui.component.ActionTopAppbar
 import com.example.storemanagement.ui.component.BottomAppBarComponent
+import com.example.storemanagement.ui.component.ErrorUI
+import com.example.storemanagement.ui.component.LoadingScreen
+import com.example.storemanagement.util.Lce
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun CategoriesScreen(navController: NavController) {
-//    Column(modifier = Modifier.fillMaxSize()) {
+fun CategoriesScreen(
+    navController: NavController,
+    categoriesViewModel: CategoriesViewModel = hiltViewModel()
+) {
+    val allCategories =
+        categoriesViewModel.readAllCategories.collectAsState().value
 
-//
-//    }
-    val listCategories = listOf(
-        Categories(id = "1", name = "test 1 "),
-        Categories(id = "2", name = "test 1"),
-        Categories(id = "3", name = "test 1"),
-        Categories(id = "4", name = "test 1"),
-    )
 
     Scaffold(
 
@@ -80,13 +82,50 @@ fun CategoriesScreen(navController: NavController) {
         }
     ) {
 
-        MainContent(it.calculateBottomPadding(), listCategories = listCategories)
+        ContentScreen(it.calculateBottomPadding(), categoriesList = allCategories)
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun ContentScreen(bottomAppBarHeight: Dp, categoriesList: Lce<List<CategoryEntity>>) {
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+//        if (categoriesList != null) {
+//            if (categoriesList.isNotEmpty())
+//                MainContent(
+//                    bottomAppBarHeight,
+//                    categoriesList = categoriesList
+//
+//                ) else {
+//
+//            }
+//        }
+        when (val state = categoriesList) {
+//                    is LCE.LOADING -> LoadingUI()
+            is Lce.Loading -> LoadingScreen()
+            is Lce.Content -> {
+                MainContent(
+                    bottomAppBarHeight,
+                    categoriesList = state.data
+
+                )
+            }
+
+            is Lce.Error -> ErrorUI(state.message)
+            else -> {}
+        }
     }
 }
 
 @ExperimentalMaterialApi
 @Composable
-private fun MainContent(bottomAppBarHeight: Dp, listCategories: List<Categories>) {
+private fun MainContent(bottomAppBarHeight: Dp, categoriesList: List<CategoryEntity>) {
+//    val list = categoriesList.collectAsState(initial = emptyList())
     // 🔥 Get BottomAppBar height to set correct bottom padding for LazyColumn
     LazyColumn(
         modifier = Modifier
@@ -101,7 +140,8 @@ private fun MainContent(bottomAppBarHeight: Dp, listCategories: List<Categories>
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
 
-        items(listCategories) { category ->
+//        items(list!!.value) { category ->
+        items(categoriesList) { category ->
 
             CategoryItem(categories = category)
         }
@@ -109,20 +149,20 @@ private fun MainContent(bottomAppBarHeight: Dp, listCategories: List<Categories>
 }
 
 @Composable
-fun CategoryItem(modifier: Modifier = Modifier, categories: Categories) {
+fun CategoryItem(modifier: Modifier = Modifier, categories: CategoryEntity) {
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Text(
-            text = categories.id,
+            text = categories.id.toString(),
             fontWeight = FontWeight.Bold,
             fontSize = 20.sp,
 //            color = Color.Black
         )
         Text(
-            text = categories.name,
+            text = categories.categoryName,
             fontWeight = FontWeight.Bold,
             fontSize = 20.sp,
 //            color = Color.Black

@@ -52,7 +52,7 @@ fun ProductScreen(navController: NavController) {
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    navController.navigate(Screens.AddCategoryScreen.route)
+                    navController.navigate(Screens.AddProductScreen.route)
                 },
                 backgroundColor = Color(0xffFFA000)
             ) {

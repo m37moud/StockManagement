@@ -122,7 +122,7 @@ dependencies {
 
     implementation 'com.github.yuriy-budiyev:code-scanner:2.3.2'
     //excel
-//    implementation("org.apache.poi:poi:3.17")
+    implementation("org.apache.poi:poi:3.17")
 //    implementation("org.apache.poi:poi-ooxml:3.17")
 
 //    implementation 'com.afollestad.material-dialogs:files:3.3.0'
@@ -133,6 +133,15 @@ dependencies {
     implementation "io.github.vanpra.compose-material-dialogs:datetime:${compose_material_dialogs}"
     implementation "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0"
 //    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.9'
+
+    // Room Local DB
+    def room_version = "2.4.3"
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+
+    implementation "androidx.room:room-ktx:$room_version"
+    implementation "androidx.compose.runtime:runtime-livedata:1.2.1"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
 }
 kapt {
     correctErrorTypes true
