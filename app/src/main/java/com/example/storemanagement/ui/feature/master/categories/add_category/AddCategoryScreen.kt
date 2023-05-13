@@ -1,7 +1,10 @@
 package com.example.storemanagement.ui.feature.master.categories.add_category
 
+import android.Manifest
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,6 +23,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -27,13 +31,34 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.storemanagement.data.database.entity.CategoryEntity
 import com.example.storemanagement.ui.component.ActionTopAppbar
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalPermissionsApi::class)
 @Composable
 fun AddCategoryScreen(
     navController: NavController,
     addCategoryViewModel: AddCategoryViewModel = hiltViewModel()
 ) {
+    val permissionState = rememberPermissionState(
+        permission = Manifest.permission.READ_EXTERNAL_STORAGE
+    )
+
+    val context = LocalContext.current
+
+    val filePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetMultipleContents(),
+        onResult =
+        {
+            addCategoryViewModel.onFilePathsListChange(it, context)
+
+        })
+    val state = addCategoryViewModel.state
+
+    SideEffect {
+        permissionState.launchPermissionRequest()
+    }
 //
     val msg = addCategoryViewModel.message.collectAsState().value
     Log.d("AddCategoryScreen", "$msg")
@@ -57,9 +82,9 @@ fun AddCategoryScreen(
         },
 
         ) {
-        val context = LocalContext.current
 
         MainContent(it.calculateBottomPadding(),
+            path = if (state.filePaths.isEmpty()) "" else state.filePaths[0],
             onAddCategoryClick = { category ->
 
                 addCategoryViewModel.insertCategory(category)
@@ -67,6 +92,12 @@ fun AddCategoryScreen(
 //                    .makeText(context, msg, Toast.LENGTH_SHORT)
 //                    .show()
 
+            }, onChoseFileClick = {
+                if (permissionState.status.isGranted) {
+                    filePickerLauncher.launch("*/*")
+                } else {
+                    permissionState.launchPermissionRequest()
+                }
             }, onBack = {
                 navController.popBackStack()
             })
@@ -79,13 +110,17 @@ fun AddCategoryScreen(
 @Composable
 private fun MainContent(
     bottomAppBarHeight: Dp,
+    path: String,
     onAddCategoryClick: (CategoryEntity) -> Unit = {},
+    onChoseFileClick: () -> Unit = {},
     onBack: (() -> Unit)? = null
 ) {
 
-    val filePath = remember { mutableStateOf(TextFieldValue("")) }
+    var filePath = remember { mutableStateOf("") }
     val categoryName = remember { mutableStateOf(TextFieldValue("")) }
 
+    if (path.isNotBlank())
+        filePath.value = path.toString()
     // 🔥 Get BottomAppBar height to set correct bottom padding for LazyColumn
     Column(modifier = Modifier.fillMaxSize()) {
         val fullWidthModifier =
@@ -113,12 +148,16 @@ private fun MainContent(
                 onValueChange = { newValue ->
                     filePath.value = newValue
                 },
+
                 label = { Text("file") },
                 placeholder = { Text("chose ecxel file to Import") },
-
+                maxLines = 1,
+                readOnly = true,
                 )
             Button(
-                onClick = {},
+                onClick = {
+                    onChoseFileClick()
+                },
                 shape = RoundedCornerShape(15.dp),
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = Color(0xffF57C00),

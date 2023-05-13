@@ -1,16 +1,22 @@
 package com.example.storemanagement.di
 //
-//import dagger.Module
-//import dagger.Provides
-//import dagger.hilt.InstallIn
-//import dagger.hilt.android.components.ViewModelComponent
+import com.example.storemanagement.util.UriPathFinder
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.scopes.ViewModelScoped
+
 //import dagger.hilt.android.scopes.ViewModelScoped
 //
-//@InstallIn(ViewModelComponent::class)
-//@Module
-//object AppModule {
-//
-//
+@InstallIn(ViewModelComponent::class)
+@Module
+object AppModule {
+
+    @ViewModelScoped
+    @Provides
+    fun provideUriPathFinder() = UriPathFinder()
+
 ////    @ViewModelScoped
 ////    @Provides
 ////    fun provideContext(app: Application): Context {
@@ -30,4 +36,4 @@ package com.example.storemanagement.di
 ////    fun provideBarCodeScanner(context: Context,options: GmsBarcodeScannerOptions): GmsBarcodeScanner {
 ////        return GmsBarcodeScanning.getClient(context, options)
 ////    }
-//}
+}
