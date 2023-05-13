@@ -54,15 +54,15 @@ fun ChooserScreen(navController: NavController) {
                 img = R.drawable.ic_camera
             ) {
                 navController.navigate(Screens.ScannerScreen.route)
-//                {
-//                    popUpTo(Screens.ScannerScreen.route) {
-////                        inclusive = true
-//                        saveState = true
-//
-//                    }
-//                    launchSingleTop = true
-//                    restoreState = true
-//                }
+                {
+                    popUpTo(Screens.ChooserScreen.route) {
+//                        inclusive = true
+                        saveState = true
+
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
             }
             ItemBox(
                 modifier = Modifier.size(150.dp),

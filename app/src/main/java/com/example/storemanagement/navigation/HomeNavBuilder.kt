@@ -9,8 +9,12 @@ import com.example.storemanagement.ui.feature.master.MasterScreen
 import com.example.storemanagement.ui.feature.scan.Scanner
 import com.example.storemanagement.ui.feature.settings.SettingsScreen
 import com.example.storemanagement.ui.feature.share.ShareScreen
+import com.example.storemanagement.ui.feature.splash.AnimatedSplashScreen
 
 fun NavGraphBuilder.home(navHostController: NavHostController) {
+    composable(route = Screens.SplashScreen.route) {
+        AnimatedSplashScreen(navHostController)
+    }
     composable(route = Screens.ChooserScreen.route) {
         ChooserScreen(navHostController)
     }

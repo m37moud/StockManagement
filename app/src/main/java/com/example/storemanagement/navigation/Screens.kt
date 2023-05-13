@@ -6,6 +6,7 @@ const val CATEGORY = "category"
 const val PRODUCT = "product"
 const val MAIN_ROOT = "root"
 sealed class Screens(val route : String ){
+    object SplashScreen : Screens(route = "splash")
     object ChooserScreen : Screens(route = "chooser")
     object ScannerScreen : Screens(route = "Scanner")
     object StockScreen : Screens(route = "stock")

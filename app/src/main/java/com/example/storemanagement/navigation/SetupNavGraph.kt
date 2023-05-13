@@ -13,7 +13,7 @@ import com.example.storemanagement.ui.feature.scan.Scanner
 fun NavGraph(navController: NavHostController) {
     NavHost(
         navController = navController,
-        startDestination = Screens.ChooserScreen.route,
+        startDestination = Screens.SplashScreen.route,
         route = MAIN_ROOT
     ) {
         home(navController)
