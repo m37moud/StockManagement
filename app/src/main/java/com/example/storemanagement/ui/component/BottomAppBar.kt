@@ -10,13 +10,15 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 
 @Composable
- fun BottomAppBarComponent(onBack: (() -> Unit)? = null ) {
+fun BottomAppBarComponent(onBack: (() -> Unit)? = null) {
     BottomAppBar(
-        backgroundColor = MaterialTheme.colors.surface,
+//        backgroundColor = MaterialTheme.colors.surface,
+        backgroundColor = Color(255,207,64),//0xffFFA000
         contentColor = MaterialTheme.colors.onSurface,
         elevation = 10.dp,
         cutoutShape = CircleShape
@@ -34,11 +36,11 @@ import androidx.compose.ui.unit.dp
         // content alpha provided by BottomAppBar
         Spacer(modifier = Modifier.weight(1f))
         IconButton(onClick = { }) {
-            Icon(Icons.Filled.Search, contentDescription = null)
+            Icon(Icons.Filled.Search, contentDescription = null, tint = Color.White)
         }
 
         IconButton(onClick = { }) {
-            Icon(Icons.Filled.MoreVert, contentDescription = null)
+            Icon(Icons.Filled.MoreVert, contentDescription = null, tint = Color.White)
         }
     }
 }

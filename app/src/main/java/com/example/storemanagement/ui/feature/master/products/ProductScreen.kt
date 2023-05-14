@@ -54,7 +54,7 @@ fun ProductScreen(navController: NavController) {
                 onClick = {
                     navController.navigate(Screens.AddProductScreen.route)
                 },
-                backgroundColor = Color(0xffFFA000)
+                backgroundColor = Color(255,207,64 )// 0xffFFA000
             ) {
                 Icon(
                     Icons.Filled.Add, tint = Color.White,
@@ -85,7 +85,8 @@ private fun MainContent(bottomAppBarHeight: Dp, listCategories: List<Categories>
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.LightGray.copy(alpha = .4f)),
+//            .background(Color.LightGray.copy(alpha = .4f))
+        ,
         contentPadding = PaddingValues(
             top = 8.dp,
             start = 8.dp,

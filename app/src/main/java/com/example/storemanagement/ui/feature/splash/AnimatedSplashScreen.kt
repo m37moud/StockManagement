@@ -63,7 +63,7 @@ fun Splash(alpha: Float) {
                 .alpha(alpha = alpha),
             painter = painterResource(id = R.drawable.ic_category),
             contentDescription = "Logo Icon",
-            tint = MaterialTheme.colors.onSurface
+            tint = Color(255,207,64)
         )
     }
 }

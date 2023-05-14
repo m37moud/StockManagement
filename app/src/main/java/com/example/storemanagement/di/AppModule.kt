@@ -1,5 +1,6 @@
 package com.example.storemanagement.di
 //
+import com.example.storemanagement.util.ExcelUtil
 import com.example.storemanagement.util.UriPathFinder
 import dagger.Module
 import dagger.Provides
@@ -16,6 +17,10 @@ object AppModule {
     @ViewModelScoped
     @Provides
     fun provideUriPathFinder() = UriPathFinder()
+
+    @ViewModelScoped
+    @Provides
+    fun provideExcelUtil() = ExcelUtil()
 
 ////    @ViewModelScoped
 ////    @Provides

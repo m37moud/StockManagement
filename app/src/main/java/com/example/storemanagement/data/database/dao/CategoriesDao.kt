@@ -19,7 +19,7 @@ interface CategoriesDao {
     suspend fun updateCategory(categoryEntity: CategoryEntity)
 
     @Query("DELETE FROM category_table WHERE id = :tid")
-    suspend fun deleteCategory(tid : String)
+    suspend fun deleteCategory(tid : Int)
 
     @Query("DELETE FROM category_table")
     suspend fun deleteAllCategories()

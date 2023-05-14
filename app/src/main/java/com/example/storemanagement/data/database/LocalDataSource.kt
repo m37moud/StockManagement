@@ -14,7 +14,7 @@ class LocalDataSource @Inject constructor(
     fun getCategoryByName(categoryName : String) = categoriesDao.getCategoryByName(categoryName)
     suspend fun insertCategory(categoryEntity: CategoryEntity) = categoriesDao.insertCategory(categoryEntity)
     suspend fun updateCategory(categoryEntity: CategoryEntity) = categoriesDao.updateCategory(categoryEntity)
-    suspend fun deleteCategory(tid : String) = categoriesDao.deleteCategory(tid)
+    suspend fun deleteCategory(tid : Int) = categoriesDao.deleteCategory(tid)
     suspend fun deleteAllCategories() = categoriesDao.deleteAllCategories()
 
 

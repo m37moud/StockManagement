@@ -1,6 +1,14 @@
 package com.example.storemanagement.ui.feature.master.categories
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.TweenSpec
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -16,12 +24,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.storemanagement.R
 import com.example.storemanagement.data.database.entity.CategoryEntity
 import com.example.storemanagement.model.Categories
 import com.example.storemanagement.navigation.Screens
@@ -65,7 +75,7 @@ fun CategoriesScreen(
                 onClick = {
                     navController.navigate(Screens.AddCategoryScreen.route)
                 },
-                backgroundColor = Color(0xffFFA000)
+                backgroundColor = Color(255, 207, 64)//0xffFFA000
             ) {
                 Icon(
                     Icons.Filled.Add, tint = Color.White,
@@ -82,13 +92,22 @@ fun CategoriesScreen(
         }
     ) {
 
-        ContentScreen(it.calculateBottomPadding(), categoriesList = allCategories)
+        ContentScreen(
+            it.calculateBottomPadding(),
+            categoriesList = allCategories,
+            onDelete = { id ->
+                categoriesViewModel.deleteCategory(id)
+            })
     }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ContentScreen(bottomAppBarHeight: Dp, categoriesList: Lce<List<CategoryEntity>>) {
+fun ContentScreen(
+    bottomAppBarHeight: Dp,
+    categoriesList: Lce<List<CategoryEntity>>,
+    onDelete: (Int) -> Unit = {}
+) {
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -111,7 +130,8 @@ fun ContentScreen(bottomAppBarHeight: Dp, categoriesList: Lce<List<CategoryEntit
             is Lce.Content -> {
                 MainContent(
                     bottomAppBarHeight,
-                    categoriesList = state.data
+                    categoriesList = state.data,
+                    onDelete = onDelete
 
                 )
             }
@@ -122,15 +142,20 @@ fun ContentScreen(bottomAppBarHeight: Dp, categoriesList: Lce<List<CategoryEntit
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @ExperimentalMaterialApi
 @Composable
-private fun MainContent(bottomAppBarHeight: Dp, categoriesList: List<CategoryEntity>) {
+private fun MainContent(
+    bottomAppBarHeight: Dp, categoriesList: List<CategoryEntity>,
+    onDelete: (Int) -> Unit = {}
+) {
 //    val list = categoriesList.collectAsState(initial = emptyList())
     // 🔥 Get BottomAppBar height to set correct bottom padding for LazyColumn
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.LightGray.copy(alpha = .4f)),
+//            .background(Color.LightGray.copy(alpha = .4f))
+        ,
         contentPadding = PaddingValues(
             top = 8.dp,
             start = 8.dp,
@@ -141,32 +166,74 @@ private fun MainContent(bottomAppBarHeight: Dp, categoriesList: List<CategoryEnt
     ) {
 
 //        items(list!!.value) { category ->
-        items(categoriesList) { category ->
 
-            CategoryItem(categories = category)
+        items(items = categoriesList, key = {
+            it.id!!
+        }) { category ->
+//            AnimatedVisibility(
+//                visible = true,
+//                exit = fadeOut(
+//                    animationSpec = TweenSpec(200, 200, FastOutLinearInEasing)
+//                )
+//            ){
+//
+//            }
+            CategoryItem(
+                modifier = Modifier.animateItemPlacement(
+                    animationSpec = tween(
+                        durationMillis = 1000,
+                    )
+                ), categories = category, onDelete = {
+                    onDelete(category.id!!)
+                }
+            )
         }
     }
 }
 
 @Composable
-fun CategoryItem(modifier: Modifier = Modifier, categories: CategoryEntity) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
+fun CategoryItem(
+    modifier: Modifier = Modifier,
+    categories: CategoryEntity,
+    onDelete: (Int) -> Unit = {}
+) {
+    Card(
+        modifier.clickable {
+//            onClick()
+        },
+        elevation = 10.dp,
+//        border = BorderStroke(1.dp, color = Color(0xffFFA000))
     ) {
-        Text(
-            text = categories.id.toString(),
-            fontWeight = FontWeight.Bold,
-            fontSize = 20.sp,
+
+        Row(
+            modifier = modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Text(
+                text = categories.id.toString(),
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
 //            color = Color.Black
-        )
-        Text(
-            text = categories.categoryName,
-            fontWeight = FontWeight.Bold,
-            fontSize = 20.sp,
+            )
+            Text(
+                text = categories.categoryName,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
 //            color = Color.Black
-        )
+            )
+            Spacer(modifier = Modifier.weight(1f))
+
+            IconButton(onClick = {
+                onDelete(categories.id!!)
+            }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_delete),
+                    contentDescription = "delete",
+                    tint = Color(255, 207, 64)
+                )
+            }
+        }
     }
 }
 

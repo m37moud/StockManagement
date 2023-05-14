@@ -2,7 +2,6 @@ package com.example.storemanagement.ui.feature.master.categories.add_category
 
 import android.Manifest
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -23,11 +22,9 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.storemanagement.data.database.entity.CategoryEntity
 import com.example.storemanagement.ui.component.ActionTopAppbar
@@ -48,10 +45,13 @@ fun AddCategoryScreen(
     val context = LocalContext.current
 
     val filePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetMultipleContents(),
+        contract = ActivityResultContracts.GetContent(),
         onResult =
         {
-            addCategoryViewModel.onFilePathsListChange(it, context)
+            it?.let { uri ->
+
+                addCategoryViewModel.onFilePathsListChange(uri, context)
+            }
 
         })
     val state = addCategoryViewModel.state
@@ -84,7 +84,7 @@ fun AddCategoryScreen(
         ) {
 
         MainContent(it.calculateBottomPadding(),
-            path = if (state.filePaths.isEmpty()) "" else state.filePaths[0],
+            path = state.filePath.ifBlank { "" },
             onAddCategoryClick = { category ->
 
                 addCategoryViewModel.insertCategory(category)
@@ -98,6 +98,15 @@ fun AddCategoryScreen(
                 } else {
                     permissionState.launchPermissionRequest()
                 }
+            }, onImportClick = { path ->
+                Log.d("AddCategoryScreen", "uri = ${state.uri}  +filePath = ${state.filePath}")
+
+                addCategoryViewModel.readExcelNew(
+                    context = context,
+                    uri = state.uri,
+                    filePath = state.filePath
+                )
+
             }, onBack = {
                 navController.popBackStack()
             })
@@ -113,6 +122,7 @@ private fun MainContent(
     path: String,
     onAddCategoryClick: (CategoryEntity) -> Unit = {},
     onChoseFileClick: () -> Unit = {},
+    onImportClick: (String) -> Unit = {},
     onBack: (() -> Unit)? = null
 ) {
 
@@ -134,45 +144,17 @@ private fun MainContent(
                         bottom = bottomAppBarHeight + 8.dp
                     )
                 )
+        /**
+         * path selected
+         */
+        PathSelector(filePath = filePath.value,
+            onChoseFileClick = { onChoseFileClick() }, onPathSelect = { path ->
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            OutlinedTextField(
-                modifier = Modifier
-                    .weight(0.8f)
-                    .padding(horizontal = 6.dp),
-                value = filePath.value,
-                onValueChange = { newValue ->
-                    filePath.value = newValue
-                },
-
-                label = { Text("file") },
-                placeholder = { Text("chose ecxel file to Import") },
-                maxLines = 1,
-                readOnly = true,
-                )
-            Button(
-                onClick = {
-                    onChoseFileClick()
-                },
-                shape = RoundedCornerShape(15.dp),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Color(0xffF57C00),
-                    contentColor = Color.White
-                )
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.AddCircle,
-                    modifier = Modifier.padding(start = 4.dp),
-                    contentDescription = null
-                )
-//                Text(text = "Save", modifier = Modifier.padding(end = 4.dp))
-            }
-        }
-
+                filePath.value = path
+            })
+        /**
+         *  selected file
+         */
         Row(
             modifier = fullWidthModifier,
             horizontalArrangement = Arrangement.Center,
@@ -181,6 +163,8 @@ private fun MainContent(
             OutlinedButton(
                 onClick = {
                     // TODO:  handle import file
+                    onImportClick(filePath.value)
+
                 },
                 shape = RoundedCornerShape(15.dp),
 //                colors = ButtonDefaults.buttonColors(
@@ -275,4 +259,51 @@ private fun MainContent(
         }
     }
 
+}
+
+@Composable
+private fun PathSelector(
+    filePath: String,
+    onPathSelect: (String) -> Unit,
+    onChoseFileClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        OutlinedTextField(
+            modifier = Modifier
+                .weight(0.8f)
+                .padding(horizontal = 6.dp),
+            value = filePath,
+            onValueChange = { newValue ->
+                onPathSelect(newValue)
+            },
+
+            label = { Text("file") },
+            placeholder = { Text("chose ecxel file to Import") },
+            maxLines = 1,
+            readOnly = true,
+        )
+
+        Button(
+            onClick = {
+                onChoseFileClick()
+
+            },
+            shape = RoundedCornerShape(15.dp),
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = Color(0xffF57C00),
+                contentColor = Color.White
+            )
+        ) {
+            Icon(
+                imageVector = Icons.Filled.AddCircle,
+                modifier = Modifier.padding(start = 4.dp),
+                contentDescription = null
+            )
+//                Text(text = "Save", modifier = Modifier.padding(end = 4.dp))
+        }
+    }
 }

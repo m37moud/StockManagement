@@ -44,4 +44,11 @@ class CategoriesViewModel @Inject constructor(val repository: Repository) : View
 
         }
     }
+
+    fun deleteCategory(id: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.local.deleteCategory(id)
+        }
+
+    }
 }
