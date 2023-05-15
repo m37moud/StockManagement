@@ -28,6 +28,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.storemanagement.data.database.entity.CategoryEntity
 import com.example.storemanagement.ui.component.ActionTopAppbar
+import com.example.storemanagement.ui.component.LoadingAlertDialog
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
@@ -74,15 +75,35 @@ fun AddCategoryScreen(
             .fillMaxWidth()
             .background(SnackbarDefaults.backgroundColor),
         topBar = {
-            ActionTopAppbar(
-                title = "add Category",
-                onBack = { navController.popBackStack() },
-                elevation = 8.dp
-            )
+            Column {
+                ActionTopAppbar(
+                    title = "add Category",
+                    onBack = { navController.popBackStack() },
+//                elevation = 8.dp
+                )
+                /**
+                 * show linear loading
+                 */
+                if (state.startImporter) {
+
+                    LinearProgressIndicator(
+                        modifier = Modifier.fillMaxWidth(),
+//                        color = MaterialTheme.colors.onSecondary
+                        color = Color(255, 207, 64)
+                    )
+
+                }
+            }
+
         },
 
         ) {
+        LoadingAlertDialog(
+            modifier = Modifier.size(100.dp),
+            openDialog = state.startImporter,
+            closeDialog = {
 
+            })
         MainContent(it.calculateBottomPadding(),
             path = state.filePath.ifBlank { "" },
             onAddCategoryClick = { category ->
@@ -160,19 +181,21 @@ private fun MainContent(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            OutlinedButton(
-                onClick = {
-                    // TODO:  handle import file
-                    onImportClick(filePath.value)
+            if (path.isNotBlank()) {
+                OutlinedButton(
+                    onClick = {
+                        // TODO:  handle import file
+                        onImportClick(filePath.value)
 
-                },
-                shape = RoundedCornerShape(15.dp),
+                    },
+                    shape = RoundedCornerShape(15.dp),
 //                colors = ButtonDefaults.buttonColors(
 //                    backgroundColor = Color(0xffF57C00),
 //                    contentColor = Color.White
 //                )
-            ) {
-                Text(text = "Import File", modifier = Modifier.padding(end = 4.dp))
+                ) {
+                    Text(text = "Import File", modifier = Modifier.padding(end = 4.dp))
+                }
             }
 
         }

@@ -28,7 +28,7 @@ fun SettingsScreen(navController: NavController) {
             ActionTopAppbar(
                 title = "Settings",
                 onBack = { navController.popBackStack() },
-                elevation = 8.dp
+//                elevation = 8.dp
             )
         },
 

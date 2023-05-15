@@ -16,23 +16,23 @@ import androidx.compose.ui.unit.dp
 fun ActionTopAppbar(
     title: String,
     onBack: (() -> Unit)? = null,
-    elevation: Dp = 8.dp,
+    elevation: Dp = 0.dp,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
     TopAppBar(
         title = {
-            Text(text = title, color = Color.White)
+            Text(text = title, color = MaterialTheme.colors.onSurface)
         },
         elevation = elevation,
-//        backgroundColor = MaterialTheme.colors.surface,
-        backgroundColor = Color(255,207,64),
-        contentColor = MaterialTheme.colors.onSurface,
+        backgroundColor = MaterialTheme.colors.surface,
+//        backgroundColor = Color(255,207,64),
+        contentColor = MaterialTheme.colors.onSecondary,
         navigationIcon = {
             IconButton(onClick = { onBack?.invoke() }) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
                     contentDescription = null,
-                    tint = Color.White
+                    tint = MaterialTheme.colors.onSurface
                 )
             }
         },

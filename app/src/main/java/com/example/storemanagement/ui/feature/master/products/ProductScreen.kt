@@ -42,7 +42,7 @@ fun ProductScreen(navController: NavController) {
                 onBack = {
                     navController.popBackStack()
                 },
-                elevation = 8.dp,
+//                elevation = 8.dp,
 //                actions = {
 //                    addCategories(onAddPress =
 //                    { navController.navigate(Screens.AddCategoryScreen.route) })
@@ -85,7 +85,7 @@ private fun MainContent(bottomAppBarHeight: Dp, listCategories: List<Categories>
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-//            .background(Color.LightGray.copy(alpha = .4f))
+            .background(Color.LightGray.copy(alpha = .4f))
         ,
         contentPadding = PaddingValues(
             top = 8.dp,

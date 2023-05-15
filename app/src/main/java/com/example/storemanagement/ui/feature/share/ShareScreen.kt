@@ -26,7 +26,7 @@ fun ShareScreen(navController: NavController){
             ActionTopAppbar(
                 title = "Share",
                 onBack = { navController.popBackStack() },
-                elevation = 8.dp
+//                elevation = 8.dp
             )
         },
 

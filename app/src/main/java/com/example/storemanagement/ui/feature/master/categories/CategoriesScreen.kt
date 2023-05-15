@@ -56,14 +56,15 @@ fun CategoriesScreen(
 
         modifier = Modifier
             .fillMaxWidth()
-            .background(backgroundColor),
+//            .background(backgroundColor)
+        ,
         topBar = {
             ActionTopAppbar(
                 title = "categories",
                 onBack = {
                     navController.popBackStack()
                 },
-                elevation = 8.dp,
+//                elevation = 8.dp,
 //                actions = {
 //                    addCategories(onAddPress =
 //                    { navController.navigate(Screens.AddCategoryScreen.route) })
@@ -76,6 +77,10 @@ fun CategoriesScreen(
                     navController.navigate(Screens.AddCategoryScreen.route)
                 },
                 backgroundColor = Color(255, 207, 64)//0xffFFA000
+                , elevation = FloatingActionButtonDefaults.elevation(
+                    defaultElevation = 4.dp,
+                    pressedElevation = 8.dp
+                )
             ) {
                 Icon(
                     Icons.Filled.Add, tint = Color.White,
@@ -86,9 +91,9 @@ fun CategoriesScreen(
         isFloatingActionButtonDocked = true,
         floatingActionButtonPosition = FabPosition.Center,
         bottomBar = {
-            BottomAppBarComponent(onBack = {
+            BottomAppBarComponent(elevation = 20.dp, onBack = {
                 navController.popBackStack()
-            })
+            }, onMenu = { categoriesViewModel.deleteAllCategory() })
         }
     ) {
 
@@ -110,7 +115,9 @@ fun ContentScreen(
 ) {
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.LightGray.copy(alpha = .4f)),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

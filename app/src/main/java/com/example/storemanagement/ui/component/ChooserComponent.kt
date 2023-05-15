@@ -35,7 +35,7 @@ fun ItemBox(
     Card(
         modifier.clickable { onClick() },
         elevation = 10.dp,
-        border = BorderStroke(1.dp, color = Color(0xffFFA000))
+//        border = BorderStroke(1.dp, color = Color(0xffFFA000))
     ) {
         Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
             Image(
@@ -56,7 +56,8 @@ fun ItemBox(
                     .padding(horizontal = 8.dp)
                     .align(Alignment.CenterHorizontally),
                 shape = CircleShape,
-                elevation = 15.dp, backgroundColor = Color(0xffFFA000)
+                elevation = 15.dp,
+                backgroundColor = Color(0xffFFA000)
             ) {
 
                 Text(

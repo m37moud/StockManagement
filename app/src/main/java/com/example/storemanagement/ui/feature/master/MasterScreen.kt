@@ -25,7 +25,7 @@ fun MasterScreen(navController: NavController) {
             ActionTopAppbar(
                 title = "Master Screen",
                 onBack = { navController.popBackStack() },
-                elevation = 8.dp
+//                elevation = 8.dp
             )
         },
 

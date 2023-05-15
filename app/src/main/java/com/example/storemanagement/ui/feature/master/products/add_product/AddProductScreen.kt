@@ -32,7 +32,7 @@ fun AddProductScreen(navController: NavController) {
             ActionTopAppbar(
                 title = "add Product",
                 onBack = { navController.popBackStack() },
-                elevation = 8.dp
+//                elevation = 8.dp
             )
         },
 
