@@ -221,6 +221,7 @@ private fun MainContent(
                 },
                 label = { Text("category name") },
                 placeholder = { Text("Enter Category name") },
+                // KeyboardOptions.Default.copy(imeAction = ImeAction.Done)
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Done
