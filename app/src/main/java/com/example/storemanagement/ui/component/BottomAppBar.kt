@@ -42,13 +42,13 @@ fun BottomAppBarComponent(elevation: Dp = 30.dp,onBack: (() -> Unit)? = null, on
         Spacer(modifier = Modifier.weight(1f))
         IconButton(onClick = { }) {
             Icon(Icons.Filled.Search, contentDescription = null,
-//                tint = Color.White
+                tint = Color(0xffF57C00)
             )
         }
 
         IconButton(onClick = { onMenu?.invoke() }) {
             Icon(Icons.Filled.Delete, contentDescription = null,
-//                tint = Color.White
+                tint = Color(0xffF57C00)
             )
         }
     }

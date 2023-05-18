@@ -76,7 +76,8 @@ fun CategoriesScreen(
                 onClick = {
                     navController.navigate(Screens.AddCategoryScreen.route)
                 },
-                backgroundColor = Color(255, 207, 64)//0xffFFA000
+//                backgroundColor = Color(255, 207, 64)//0xffFFA000
+                backgroundColor = Color(0xffF57C00)//0xffFFA000
                 , elevation = FloatingActionButtonDefaults.elevation(
                     defaultElevation = 4.dp,
                     pressedElevation = 8.dp
@@ -237,7 +238,8 @@ fun CategoryItem(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_delete),
                     contentDescription = "delete",
-                    tint = Color(255, 207, 64)
+//                    tint = Color(255, 207, 64)
+                    tint = Color(0xffF57C00)
                 )
             }
         }

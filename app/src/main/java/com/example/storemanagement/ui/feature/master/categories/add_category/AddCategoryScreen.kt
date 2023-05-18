@@ -189,10 +189,10 @@ private fun MainContent(
 
                     },
                     shape = RoundedCornerShape(15.dp),
-//                colors = ButtonDefaults.buttonColors(
-//                    backgroundColor = Color(0xffF57C00),
-//                    contentColor = Color.White
-//                )
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color(0xffF57C00),
+                        contentColor = Color.White
+                    )
                 ) {
                     Text(text = "Import File", modifier = Modifier.padding(end = 4.dp))
                 }
