@@ -186,6 +186,7 @@ private fun MainContent(
 //            ){
 //
 //            }
+
             CategoryItem(
                 modifier = Modifier.animateItemPlacement(
                     animationSpec = tween(
